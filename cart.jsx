@@ -120,9 +120,9 @@ const Products = (props) => {
       <li key={index}>
         <Image src={photos[index % 4]} width={70} roundedCircle></Image>
         <Button variant="primary" size="large">
-          {item.name}:{item.cost}
+          {item.name} ${item.cost}, {item.instock} in stock
         </Button>
-        <input name={item.name} type="submit" onClick={addToCart}></input>
+        <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input>
       </li>
     );
   });
@@ -151,7 +151,7 @@ const Products = (props) => {
     let final = cart.map((item, index) => {
       return (
         <div key={index} index={index}>
-          {item.name}
+          {item.name} ${item.cost}
         </div>
       );
     });
