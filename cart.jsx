@@ -122,11 +122,9 @@ const Products = (props) => {
         <Card style={{ width: '18rem' }}>
           <Card.Img variant="top" src={photos[index % 4]} />
           <Card.Body>
-            <Card.Title>{item.name}e</Card.Title>
+            <Card.Title>{item.name}, ${item.cost}</Card.Title>
             <Card.Text>
-              <strong>${item.cost}</strong>
-              <br></br>
-              <em>Product of {item.country}</em>
+              Product of {item.country}
             </Card.Text>
             <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input> {item.instock} left
           </Card.Body>
