@@ -48,6 +48,7 @@ const useDataApi = (initialUrl, initialData) => {
   }, [url]);
   return [state, setUrl];
 };
+
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
     case "FETCH_INIT":
@@ -90,9 +91,9 @@ const Products = (props) => {
   } = ReactBootstrap;
   //  Fetch Data
   const { Fragment, useState, useEffect, useReducer } = React;
-  const [query, setQuery] = useState("http://localhost:1337/products");
+  const [query, setQuery] = useState("http://localhost:1337/api/products");
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
-    "http://localhost:1337/products",
+    "http://localhost:1337/api/products",
     {
       data: [],
     }
@@ -110,22 +111,30 @@ const Products = (props) => {
     let newCart = cart.filter((item, i) => index != i);
     setCart(newCart);
   };
-  const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
+  const photos = ["apples.png", "oranges.png", "beans.png", "cabbage.png"];
 
   let list = items.map((item, index) => {
     //let n = index + 1049;
     //let url = "https://picsum.photos/id/" + n + "/50/50";
 
     return (
-      <li key={index}>
-        <Image src={photos[index % 4]} width={70} roundedCircle></Image>
-        <Button variant="primary" size="large">
-          {item.name} ${item.cost}, {item.instock} in stock
-        </Button>
-        <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input>
+      <li key={index}>        
+        <Card style={{ width: '18rem' }}>
+          <Card.Img variant="top" src={photos[index % 4]} />
+          <Card.Body>
+            <Card.Title>{item.name}e</Card.Title>
+            <Card.Text>
+              <strong>${item.cost}</strong>
+              <br></br>
+              <em>Product of {item.country}</em>
+            </Card.Text>
+            <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input> {item.instock} left
+          </Card.Body>
+        </Card>
       </li>
     );
   });
+
   let cartList = cart.map((item, index) => {
     return (
       <Card key={index}>
