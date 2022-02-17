@@ -103,13 +103,22 @@ const Products = (props) => {
   const addToCart = (e) => {
     let name = e.target.name;
     let item = items.filter((item) => item.name == name);
+    if (item[0].instock == 0) return;
+    item[0].instock = item[0].instock -1;
     console.log(`add to Cart ${JSON.stringify(item)}`);
     setCart([...cart, ...item]);
     //doFetch(query);
   };
-  const deleteCartItem = (index) => {
-    let newCart = cart.filter((item, i) => index != i);
+
+  const deleteCartItem = (delIndex) => {
+    let newCart = cart.filter((item, i) => delIndex != i);
+    let target = cart.filter((item, index) => delIndex == index);
+    let newItems = items.map((item, index) => {
+      if (item.name == target[0].name) item.instock = item.instock + 1;
+      return item;
+    });
     setCart(newCart);
+    setItems(newItems);
   };
   const photos = ["apples.png", "oranges.png", "beans.png", "cabbage.png"];
 
@@ -138,15 +147,16 @@ const Products = (props) => {
       <Card key={index}>
         <Card.Header>
           <Accordion.Toggle as={Button} variant="link" eventKey={1 + index}>
-            {item.name}
+            {item.name}, ${item.cost}
           </Accordion.Toggle>
         </Card.Header>
         <Accordion.Collapse
           onClick={() => deleteCartItem(index)}
           eventKey={1 + index}
+          name={item.name}
         >
           <Card.Body>
-            $ {item.cost} from {item.country}
+             Remove from cart
           </Card.Body>
         </Accordion.Collapse>
       </Card>
@@ -193,20 +203,33 @@ const Products = (props) => {
         </Col>
       </Row>
       <Row>
-        <form
-          onSubmit={(event) => {
-            restockProducts(`http://localhost:1337/${query}`);
-            console.log(`Restock called on ${query}`);
-            event.preventDefault();
-          }}
-        >
-          <input
-            type="text"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <button type="submit">ReStock Products</button>
-        </form>
+        <Col>
+          <form
+            onSubmit={(event) => {
+              restockProducts(`http://localhost:1337/${query}`);
+              console.log(`Restock called on ${query}`);
+              event.preventDefault();
+            }}
+          >
+            <input
+              type="text"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <button type="submit">ReStock Products</button>
+          </form>
+        </Col>
+        <Col>
+        <div>
+            <p>Photo attribution:</p>
+            <ul>
+              <li>Apples: Photo by <a href="https://unsplash.com/@cenali?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matheus Cenali</a> on <a href="https://unsplash.com/s/photos/apples?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
+              <li>Oranges: Photo by <a href="https://unsplash.com/@sweetsimplesunshine?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jen Gunter</a> on <a href="https://unsplash.com/s/photos/oranges?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
+              <li>Beans: Photo by <a href="https://unsplash.com/@lukasz_rawa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Łukasz Rawa</a> on <a href="https://unsplash.com/s/photos/beans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
+              <li>Cabbage: Photo by <a href="https://unsplash.com/@shelleypauls?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Shelley Pauls</a> on <a href="https://unsplash.com/s/photos/cabbage?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
+            </ul>
+          </div>
+        </Col>
       </Row>
     </Container>
   );
