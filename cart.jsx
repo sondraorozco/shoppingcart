@@ -81,11 +81,13 @@ const Products = (props) => {
   const [total, setTotal] = React.useState(0);
   const {
     Card,
+    CardGroup,
     Accordion,
     Button,
     Container,
     Row,
     Col,
+    Table,
     Image,
     Input,
   } = ReactBootstrap;
@@ -123,43 +125,36 @@ const Products = (props) => {
   const photos = ["apples.png", "oranges.png", "beans.png", "cabbage.png"];
 
   let list = items.map((item, index) => {
-    //let n = index + 1049;
-    //let url = "https://picsum.photos/id/" + n + "/50/50";
-
-    return (
-      <li key={index}>        
-        <Card style={{ width: '18rem' }}>
-          <Card.Img variant="top" src={photos[index % 4]} />
-          <Card.Body>
-            <Card.Title>{item.name}, ${item.cost}</Card.Title>
-            <Card.Text>
-              Product of {item.country}
-            </Card.Text>
-            <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input> {item.instock} left
-          </Card.Body>
-        </Card>
-      </li>
+    return (       
+      <Card style={{ width: '18rem' }}>
+        <Card.Img variant="top" src={photos[index % 4]} />
+        <Card.Body>
+          <Card.Title>{item.name}, ${item.cost}</Card.Title>
+          <Card.Text>
+            Product of {item.country}
+          </Card.Text>
+          <input name={item.name} type="submit" value="Add to cart" onClick={addToCart}></input> {item.instock} left
+        </Card.Body>
+      </Card>
     );
   });
 
   let cartList = cart.map((item, index) => {
     return (
-      <Card key={index}>
-        <Card.Header>
-          <Accordion.Toggle as={Button} variant="link" eventKey={1 + index}>
-            {item.name}, ${item.cost}
-          </Accordion.Toggle>
-        </Card.Header>
-        <Accordion.Collapse
-          onClick={() => deleteCartItem(index)}
-          eventKey={1 + index}
-          name={item.name}
-        >
-          <Card.Body>
-             Remove from cart
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
+      <tr key={index}>
+        <td>
+          {item.name}, ${item.cost}
+        </td>
+        <td>
+          <Button
+            onClick={() => deleteCartItem(index)}
+            eventKey={1 + index}
+            name={item.name}
+            variant="link"
+          >Remove from cart
+          </Button>
+        </td>
+      </tr>
     );
   });
 
@@ -187,47 +182,48 @@ const Products = (props) => {
 
   return (
     <Container>
-      <Row>
+      <Row className="gy-5">
         <Col>
-          <h1>Product List</h1>
-          <ul style={{ listStyleType: "none" }}>{list}</ul>
+          <h2>Product List</h2>
+          <CardGroup>
+            {list}
+          </CardGroup>
+        </Col>
+      </Row>
+      <Row className="gy-5">
+        <Col>
+          <h2>Cart Contents</h2>
+          <Table striped size="sm">
+            <tbody>
+              {cartList}
+            </tbody>
+          </Table>
         </Col>
         <Col>
-          <h1>Cart Contents</h1>
-          <Accordion>{cartList}</Accordion>
-        </Col>
-        <Col>
-          <h1>CheckOut </h1>
+          <h2>CheckOut </h2>
           <Button onClick={checkOut}>CheckOut $ {finalList().total}</Button>
           <div> {finalList().total > 0 && finalList().final} </div>
         </Col>
       </Row>
-      <Row>
+      <Row className="gy-5">
         <Col>
-          <form
-            onSubmit={(event) => {
-              restockProducts(`http://localhost:1337/${query}`);
-              console.log(`Restock called on ${query}`);
-              event.preventDefault();
-            }}
-          >
-            <input
-              type="text"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <button type="submit">ReStock Products</button>
-          </form>
-        </Col>
-        <Col>
-        <div>
-            <p>Photo attribution:</p>
-            <ul>
-              <li>Apples: Photo by <a href="https://unsplash.com/@cenali?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matheus Cenali</a> on <a href="https://unsplash.com/s/photos/apples?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
-              <li>Oranges: Photo by <a href="https://unsplash.com/@sweetsimplesunshine?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jen Gunter</a> on <a href="https://unsplash.com/s/photos/oranges?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
-              <li>Beans: Photo by <a href="https://unsplash.com/@lukasz_rawa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Łukasz Rawa</a> on <a href="https://unsplash.com/s/photos/beans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
-              <li>Cabbage: Photo by <a href="https://unsplash.com/@shelleypauls?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Shelley Pauls</a> on <a href="https://unsplash.com/s/photos/cabbage?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></li>
-            </ul>
+            <form
+              onSubmit={(event) => {
+                restockProducts(`http://localhost:1337/api/${query}`);
+                console.log(`Restock called on ${query}`);
+                event.preventDefault();
+              }}
+            >
+              <input
+                type="text"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              <button type="submit">ReStock Products</button>
+            </form>
+          
+          <div>
+            <p className="small">Photo attribution: Apples photo by <a href="https://unsplash.com/@cenali?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matheus Cenali</a> on <a href="https://unsplash.com/s/photos/apples?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>, Oranges photo by <a href="https://unsplash.com/@sweetsimplesunshine?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jen Gunter</a> on <a href="https://unsplash.com/s/photos/oranges?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>, Beans photo by <a href="https://unsplash.com/@lukasz_rawa?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Łukasz Rawa</a> on <a href="https://unsplash.com/s/photos/beans?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>, Cabbage photo by <a href="https://unsplash.com/@shelleypauls?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Shelley Pauls</a> on <a href="https://unsplash.com/s/photos/cabbage?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></p>
           </div>
         </Col>
       </Row>
